@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Role extends Model
 {
@@ -26,7 +28,7 @@ class Role extends Model
 			$this->name = $attributes['name'];
 		}
 		if (isset($attributes['slug'])) {
-			$this->slug = $attributes['slug'];
+			$this->slug = Str::kebab($this->name);
 		}
 	}
 }
