@@ -74,4 +74,16 @@ class AuthService implements AuthServiceInterface
 
 		return true;
 	}
+
+	function refresh_token() : Array
+	{
+		$user = Auth::user();
+		$token = $user->createToken('auth_token')->plainTextToken;
+
+		return [
+			'user' => $user,
+			'token' => $token,
+			'token_type' => 'Bearer',
+		];
+	}
 }
