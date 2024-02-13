@@ -41,4 +41,18 @@ class UserRepository implements UserRepositoryInterface
 
 		return $user;
     }
+
+	function update(User $user, array $attributes) : User
+	{
+		try {
+			$user->setAttributeFromJson($attributes);
+			$user->save();
+		} catch (Exception $e) {
+			$message = $e->getMessage();
+			$log_data = ['function' => 'update', 'attributes' => $attributes];
+			throw new Exception($e);
+		}
+
+		return $user;
+	}
 }
