@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Libraries\StaticLib;
+use App\Models\SystemLogs;
 
 class APIBaseController extends Controller
 {
@@ -56,6 +56,25 @@ class APIBaseController extends Controller
 		if (in_array($exception->getCode(), [StaticLib::SUCCESS_CODE, StaticLib::VALIDATION_ERROR_CODE, StaticLib::UNAUTHORIZED_CODE, StaticLib::BAD_REQUEST_CODE, StaticLib::FORBIDDEN_CODE, StaticLib::UNKNOWN_ERROR_CODE])) {
 			$this->status = $exception->getCode();
 			$this->message = $exception->getMessage();
+
+			if ($exception->getCode() === StaticLib::UNKNOWN_ERROR_CODE) {
+				$this->create_logs($exception);
+			}
 		}
+	}
+
+	public function create_logs($exception)
+	{
+		$log_data = ['file' => $exception->getFile(), 'line' => $exception->getLine()];
+		$attributes = [
+			'type' => 'general',
+			'status' => 'failed',
+			'message' => $exception->getMessage(),
+			'data' => $log_data,
+		];
+
+		$logs = new SystemLogs();
+		$logs->setAttributeFromJson($attributes);
+		$logs->save();
 	}
 }
