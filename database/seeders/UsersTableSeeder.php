@@ -18,13 +18,22 @@ class UsersTableSeeder extends Seeder
     {
         $users = [
             [
-                'nik'    => 'super',
+                'nik'    => '1234567890',
                 'email'    => 'super-admin@hr.com',
                 'password' => 'password',
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
                 'gender' => 'L',
                 'role_slug' => 'super-admin',
+            ],
+            [
+                'nik'    => '0987654321',
+                'email'    => 'staff@office.com',
+                'password' => 'password',
+                'first_name' => 'Staff',
+                'last_name' => 'Member',
+                'gender' => 'L',
+                'role_slug' => 'staff',
             ],
         ];
 
