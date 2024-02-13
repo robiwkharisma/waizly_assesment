@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'auth'], function ($api) {
+	# Login
+	$api->post('login', ['as' => 'api.auth.login', 'uses' => 'AuthController@login']);
+
+	Route::group(['middleware' => 'auth:sanctum'], function ($api) {
+		$api->post('change-password', ['as' => 'api.auth.change-password', 'uses' => 'AuthController@change_password']);
+		$api->post('refresh-token', ['as' => 'api.auth.refresh-token', 'uses' => 'AuthController@refresh_token']);
+		$api->post('logout', ['as' => 'api.auth.logout', 'uses' => 'AuthController@logout']);
+	});
 });

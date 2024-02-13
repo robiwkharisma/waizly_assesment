@@ -86,4 +86,11 @@ class AuthService implements AuthServiceInterface
 			'token_type' => 'Bearer',
 		];
 	}
+
+	function logout() : bool
+	{
+		$user = Auth::user()->currentAccessToken()->delete();
+
+		return true;
+	}
 }
