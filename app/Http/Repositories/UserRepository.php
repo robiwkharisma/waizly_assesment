@@ -3,6 +3,7 @@
 namespace App\Http\Repositories;
 
 use App\Http\Interfaces\Repositories\UserRepositoryInterface;
+use App\Libraries\StaticLib;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,7 +17,7 @@ class UserRepository implements UserRepositoryInterface
 		try {
 			$users = User::where($where)->get($fields);
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
 		}
 
 		return $users;
@@ -32,7 +33,7 @@ class UserRepository implements UserRepositoryInterface
 				$user = $users->first();
 			}
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
 		}
 
 		return $user;
@@ -44,7 +45,7 @@ class UserRepository implements UserRepositoryInterface
 			$user->setAttributeFromJson($attributes);
 			$user->save();
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
 		}
 
 		return $user;
