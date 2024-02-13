@@ -33,6 +33,7 @@ class TaskController extends Controller
 	public function get_detail(Request $request, $task_id)
 	{
 		try {
+			$this->data = $this->task_service->get_detail($task_id);
 			$this->message = 'MESSAGE.SUCCESS';
 		} catch (\Exception $e) {
 			$this->message = $e;

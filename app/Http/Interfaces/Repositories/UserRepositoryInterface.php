@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 interface UserRepositoryInterface
 {
 	function get_many(array $where, array $fields = ['*']) : Collection;
-	function get_first(array $where, array $fields = ['*']) : User;
+	function get_first(array $where, array $fields = ['*']) : mixed;
 	function update(User $user, array $attributes) : User;
 }

@@ -6,6 +6,7 @@ use App\Http\Interfaces\Repositories\TaskRepositoryInterface;
 use App\Libraries\StaticLib;
 use App\Models\Task;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class TaskRepository implements TaskRepositoryInterface
 {
@@ -34,4 +35,33 @@ class TaskRepository implements TaskRepositoryInterface
 
 		return $tasks;
 	}
+
+    function get_many(array $where, array $fields = ['*']) : Collection
+	{
+		$tasks = [];
+
+		try {
+			$tasks = Task::where($where)->get($fields);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
+		}
+
+		return $tasks;
+    }
+
+    function get_first(array $where, array $fields = ['*']) : mixed
+    {
+		$user = null;
+
+		try {
+			$tasks = $this->get_many($where, $fields);
+			if ($tasks) {
+				$user = $tasks->first();
+			}
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
+		}
+
+		return $user;
+    }
 }

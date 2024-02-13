@@ -23,7 +23,7 @@ class UserRepository implements UserRepositoryInterface
 		return $users;
     }
 
-    function get_first(array $where, array $fields = ['*']) : User
+    function get_first(array $where, array $fields = ['*']) : mixed
     {
 		$user = null;
 

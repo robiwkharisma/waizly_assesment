@@ -25,7 +25,7 @@ class TaskService implements TaskServiceInterface
 		return $this->task_repository->get_list_paginated($attributes);
 	}
 
-	public function getOrderModel($attributes)
+	private function getOrderModel($attributes)
 	{
 		if ($attributes['order_column'] == 'status_name' || $attributes['order_column'] == 'status_name') {
 			return 'task_statuses';
@@ -34,7 +34,7 @@ class TaskService implements TaskServiceInterface
 		return 'tasks';
 	}
 
-	public function getOrderName($attributes)
+	private function getOrderName($attributes)
 	{
 		if (isset($attributes['order_column'])) {
 			if ($attributes['order_column'] == 'status_name') {
@@ -46,5 +46,13 @@ class TaskService implements TaskServiceInterface
 		}
 
 		return 'created_at';
+	}
+
+	function get_detail(int $task_id) : mixed
+	{
+		$query = [
+			'id' => $task_id,
+		];
+		return $this->task_repository->get_first($query);
 	}
 }
