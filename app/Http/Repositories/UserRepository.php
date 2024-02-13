@@ -13,10 +13,6 @@ class UserRepository implements UserRepositoryInterface
 	{
 		$users = [];
 
-		if (!$fields) {
-			$fields = [];
-		}
-
 		try {
 			$users = User::where($where)->get($fields);
 		} catch (Exception $e) {
