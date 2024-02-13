@@ -23,7 +23,7 @@ class TaskStatus extends Model
 	public function setAttributeFromJson($attributes)
 	{
 		if (isset($attributes['name'])) {
-			$this->name = $attributes['name'];
+			$this->name = strtoupper($attributes['name']);
 		}
 	}
 }
