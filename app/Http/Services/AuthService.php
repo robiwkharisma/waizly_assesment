@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Interfaces\Repositories\SystemLogRepositoryInterface;
 use App\Http\Interfaces\Repositories\UserRepositoryInterface;
 use App\Http\Interfaces\Services\AuthServiceInterface;
 use App\Libraries\StaticLib;
@@ -13,10 +14,15 @@ use Illuminate\Support\Facades\Hash;
 class AuthService implements AuthServiceInterface
 {
 	protected $user_repository;
+	protected $logs_repo;
 
-	public function __construct(UserRepositoryInterface $user_repo)
+	public function __construct(
+		UserRepositoryInterface $user_repo,
+		SystemLogRepositoryInterface $logs_repo
+	)
 	{
 		$this->user_repository = $user_repo;
+		$this->logs_repo = $logs_repo;
 	}
 
 	function login(array $credentials) : Array {
@@ -63,13 +69,16 @@ class AuthService implements AuthServiceInterface
 			'password' => $params['new_password'],
 		];
 
-		DB::beginTransaction();
 		try {
+			DB::beginTransaction();
 			$user = $this->user_repository->update($user, $attributes);
 			DB::commit();
 		} catch (Exception $e) {
 			DB::rollback();
-			throw new Exception($e);
+			$message = $e->getMessage();
+			$log_data = ['function' => 'change_password', 'file' => $e->getFile(), 'line' => $e->getLine(), 'attributes' => $attributes];
+			$this->logs_repo->create('auth_service', 'failed', $message, $log_data);
+			throw new Exception($message);
 		}
 
 		return true;

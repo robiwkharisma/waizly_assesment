@@ -16,7 +16,7 @@ class UserRepository implements UserRepositoryInterface
 		try {
 			$users = User::where($where)->get($fields);
 		} catch (Exception $e) {
-			$log_data = ['function' => 'get_many', 'where' => $where, 'fields' => $fields];
+			throw new Exception($e->getMessage());
 		}
 
 		return $users;
@@ -32,7 +32,7 @@ class UserRepository implements UserRepositoryInterface
 				$user = $users->first();
 			}
 		} catch (Exception $e) {
-			$log_data = ['function' => 'get_first', 'where' => $where, 'fields' => $fields];
+			throw new Exception($e->getMessage());
 		}
 
 		return $user;
@@ -44,9 +44,7 @@ class UserRepository implements UserRepositoryInterface
 			$user->setAttributeFromJson($attributes);
 			$user->save();
 		} catch (Exception $e) {
-			$message = $e->getMessage();
-			$log_data = ['function' => 'update', 'attributes' => $attributes];
-			throw new Exception($e);
+			throw new Exception($e->getMessage());
 		}
 
 		return $user;

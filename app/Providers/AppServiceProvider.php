@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->bind(\App\Http\Interfaces\Services\AuthServiceInterface::class, \App\Http\Services\AuthService::class);
 		// Repositories
 		$this->app->bind(\App\Http\Interfaces\Repositories\UserRepositoryInterface::class, \App\Http\Repositories\UserRepository::class);
+		$this->app->bind(\App\Http\Interfaces\Repositories\SystemLogRepositoryInterface::class, \App\Http\Repositories\SystemLogRepository::class);
 	}
 
 	/**
