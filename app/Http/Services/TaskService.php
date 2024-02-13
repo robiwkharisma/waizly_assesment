@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Interfaces\Repositories\SystemLogRepositoryInterface;
 use App\Http\Interfaces\Repositories\TaskRepositoryInterface;
 use App\Http\Interfaces\Services\TaskServiceInterface;
 use App\Libraries\StaticLib;
@@ -11,10 +12,15 @@ use Illuminate\Support\Facades\DB;
 class TaskService implements TaskServiceInterface
 {
 	protected $task_repository;
+	protected $logs_repo;
 
-	public function __construct(TaskRepositoryInterface $task_repository)
+	public function __construct(
+		TaskRepositoryInterface $task_repository,
+		SystemLogRepositoryInterface $logs_repo
+	)
 	{
 		$this->task_repository = $task_repository;
+		$this->logs_repo = $logs_repo;
 	}
 
 	function get_list(array $params) : mixed
@@ -76,9 +82,25 @@ class TaskService implements TaskServiceInterface
 			$message = $e->getMessage();
 			$log_data = ['function' => 'update_or_create', 'file' => $e->getFile(), 'line' => $e->getLine(), 'attributes' => $params];
 			$this->logs_repo->create('task_service', 'failed', $message, $log_data);
-			throw new Exception($message, StaticLib::UNKNOWN_ERROR_CODE);
+			throw new Exception($message);
 		}
 
 		return $task;
+	}
+
+	function delete(int $task_id) : bool
+	{
+		try {
+			DB::beginTransaction();
+			$is_deleted = $this->task_repository->delete($task_id);
+			DB::commit();
+		} catch (Exception $e) {
+			DB::rollback();
+			$message = $e->getMessage();
+			$log_data = ['function' => 'delete', 'file' => $e->getFile(), 'line' => $e->getLine(), 'task_id' => $task_id];
+			$this->logs_repo->create('task_service', 'failed', $message, $log_data);
+			throw new Exception($message, $e->getCode());
+		}
+		return $is_deleted;
 	}
 }

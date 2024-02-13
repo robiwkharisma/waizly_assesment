@@ -12,4 +12,5 @@ interface TaskRepositoryInterface
     function get_first(array $where, array $fields = ['*']) : mixed;
     function create(array $attributes) : Task;
     function update(Task $task, array $attributes) : Task;
+    function delete(int $task_id) : bool;
 }

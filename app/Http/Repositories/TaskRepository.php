@@ -89,4 +89,23 @@ class TaskRepository implements TaskRepositoryInterface
 
 		return $task;
 	}
+
+	function delete(int $task_id) : bool
+	{
+		try {
+			$query = [
+				'id' => $task_id,
+			];
+			$task = $this->get_first($query);
+			if (!$task) {
+				throw new Exception('MESSAGE.DATA_NOT_FOUND', StaticLib::BAD_REQUEST_CODE);
+			}
+			$task->delete();
+		} catch (Exception $e) {
+			$code = $e->getCode() ? $e->getCode() : StaticLib::UNKNOWN_ERROR_CODE;
+			throw new Exception($e->getMessage(), $code);
+		}
+
+		return true;
+	}
 }

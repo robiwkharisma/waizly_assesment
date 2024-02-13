@@ -77,6 +77,26 @@ class TaskController extends Controller
 	public function update(Request $request)
 	{
 		try {
+			$params = $request->all();
+
+			$rules = array(
+				'id' => 'required|exists:tasks,id,deleted_at,NULL',
+				'title' => 'required',
+			);
+			$messages = [
+				'id.required' => 'MESSAGE.ERROR_REQUIRED',
+				'id.exists' => 'MESSAGE.DATA_NOT_FOUND',
+				'title.required' => 'MESSAGE.ERROR_REQUIRED',
+			];
+
+			$validate = Validator::make($params, $rules, $messages);
+			if ($validate->fails()) {
+				$this->data = $validate->messages();
+				throw new Exception("MESSAGE.ERROR_VALIDATION", StaticLib::VALIDATION_ERROR_CODE);
+			}
+
+			$this->data = $this->task_service->update_or_create($params);
+
 			$this->message = 'MESSAGE.SUCCESS';
 		} catch (Exception $e) {
 			$this->message = $e;
@@ -89,6 +109,7 @@ class TaskController extends Controller
 	public function delete(Request $request, $task_id)
 	{
 		try {
+			$this->data = $this->task_service->delete($task_id);
 			$this->message = 'MESSAGE.SUCCESS';
 		} catch (Exception $e) {
 			$this->message = $e;
