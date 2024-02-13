@@ -24,3 +24,16 @@ Route::group(['prefix' => 'auth'], function ($api) {
 		$api->post('logout', ['as' => 'api.auth.logout', 'uses' => 'AuthController@logout']);
 	});
 });
+
+Route::group(['prefix' => 'tasks', 'middleware' => 'auth:sanctum'], function ($api) {
+	# Get List
+	$api->get('/', ['as' => 'api.tasks.list', 'uses' => 'TaskController@get_list']);
+	# Get Detail
+	$api->get('/{task_id}/detail', ['as' => 'api.tasks.list', 'uses' => 'TaskController@get_detail']);
+	# Create
+	$api->post('/create', ['as' => 'api.tasks.list', 'uses' => 'TaskController@create']);
+	# Update
+	$api->put('/update', ['as' => 'api.tasks.list', 'uses' => 'TaskController@update']);
+	# Delete
+	$api->delete('/{task_id}/delete', ['as' => 'api.tasks.list', 'uses' => 'TaskController@delete']);
+});
