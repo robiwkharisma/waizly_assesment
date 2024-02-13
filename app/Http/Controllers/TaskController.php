@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIBaseController as Controller;
 use App\Http\Interfaces\Services\TaskServiceInterface;
 use App\Libraries\StaticLib;
+use Exception;
+use Validator;
 
 class TaskController extends Controller
 {
@@ -22,7 +24,7 @@ class TaskController extends Controller
 			$params = $request->all();
 			$this->data = $this->task_service->get_list($params);
 			$this->message = 'MESSAGE.SUCCESS';
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->message = $e;
 			$this->status = StaticLib::UNKNOWN_ERROR_CODE;
 		}
@@ -35,7 +37,7 @@ class TaskController extends Controller
 		try {
 			$this->data = $this->task_service->get_detail($task_id);
 			$this->message = 'MESSAGE.SUCCESS';
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->message = $e;
 			$this->status = StaticLib::UNKNOWN_ERROR_CODE;
 		}
@@ -46,8 +48,25 @@ class TaskController extends Controller
 	public function create(Request $request)
 	{
 		try {
+			$params = $request->all();
+
+			$rules = array(
+				'title' => 'required',
+			);
+			$messages = [
+				'title.required'	=> 'MESSAGE.ERROR_REQUIRED',
+			];
+
+			$validate = Validator::make($params, $rules, $messages);
+			if ($validate->fails()) {
+				$this->data = $validate->messages();
+				throw new Exception("MESSAGE.ERROR_VALIDATION", StaticLib::VALIDATION_ERROR_CODE);
+			}
+
+			$this->data = $this->task_service->update_or_create($params);
+
 			$this->message = 'MESSAGE.SUCCESS';
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->message = $e;
 			$this->status = StaticLib::UNKNOWN_ERROR_CODE;
 		}
@@ -59,7 +78,7 @@ class TaskController extends Controller
 	{
 		try {
 			$this->message = 'MESSAGE.SUCCESS';
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->message = $e;
 			$this->status = StaticLib::UNKNOWN_ERROR_CODE;
 		}
@@ -71,7 +90,7 @@ class TaskController extends Controller
 	{
 		try {
 			$this->message = 'MESSAGE.SUCCESS';
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->message = $e;
 			$this->status = StaticLib::UNKNOWN_ERROR_CODE;
 		}

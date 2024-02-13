@@ -31,7 +31,7 @@ Route::group(['prefix' => 'tasks', 'middleware' => 'auth:sanctum'], function ($a
 	# Get Detail
 	$api->get('/{task_id}/detail', ['as' => 'api.tasks.list', 'uses' => 'TaskController@get_detail']);
 	# Create
-	$api->post('/create', ['as' => 'api.tasks.list', 'uses' => 'TaskController@create']);
+	$api->post('/', ['as' => 'api.tasks.list', 'uses' => 'TaskController@create']);
 	# Update
 	$api->put('/update', ['as' => 'api.tasks.list', 'uses' => 'TaskController@update']);
 	# Delete

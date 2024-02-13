@@ -4,6 +4,9 @@ namespace App\Http\Services;
 
 use App\Http\Interfaces\Repositories\TaskRepositoryInterface;
 use App\Http\Interfaces\Services\TaskServiceInterface;
+use App\Libraries\StaticLib;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class TaskService implements TaskServiceInterface
 {
@@ -54,5 +57,28 @@ class TaskService implements TaskServiceInterface
 			'id' => $task_id,
 		];
 		return $this->task_repository->get_first($query);
+	}
+
+	function update_or_create(array $params) : mixed
+	{
+		try {
+			DB::beginTransaction();
+			$task_id = $params['id'] ?? null;
+			$existing_task = $task_id ? $this->get_detail($task_id) : null;
+			if (!$existing_task) {
+				$task = $this->task_repository->create($params);
+			} else {
+				$task = $this->task_repository->update($existing_task, $params);
+			}
+			DB::commit();
+		} catch (Exception $e) {
+			DB::rollback();
+			$message = $e->getMessage();
+			$log_data = ['function' => 'update_or_create', 'file' => $e->getFile(), 'line' => $e->getLine(), 'attributes' => $params];
+			$this->logs_repo->create('task_service', 'failed', $message, $log_data);
+			throw new Exception($message, StaticLib::UNKNOWN_ERROR_CODE);
+		}
+
+		return $task;
 	}
 }

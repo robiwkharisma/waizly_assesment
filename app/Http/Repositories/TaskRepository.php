@@ -64,4 +64,29 @@ class TaskRepository implements TaskRepositoryInterface
 
 		return $user;
     }
+
+	function create(array $attributes) : Task
+	{
+		try {
+			$task = new Task();
+			$task->setAttributeFromJson($attributes);
+			$task->save();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
+		}
+
+		return $task;
+	}
+
+	function update(Task $task, array $attributes) : Task
+	{
+		try {
+			$task->setAttributeFromJson($attributes);
+			$task->save();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage(), StaticLib::UNKNOWN_ERROR_CODE);
+		}
+
+		return $task;
+	}
 }
