@@ -2,16 +2,16 @@
 
 namespace App\Http\Services;
 
+use App\Http\Interfaces\Repositories\TaskRepositoryInterface;
 use App\Http\Interfaces\Services\TaskServiceInterface;
-use App\Models\Task;
-use Exception;
 
 class TaskService implements TaskServiceInterface
 {
-	protected $auth_service;
+	protected $task_repository;
 
-	public function __construct()
+	public function __construct(TaskRepositoryInterface $task_repository)
 	{
+		$this->task_repository = $task_repository;
 	}
 
 	function get_list(array $params) : mixed
@@ -22,19 +22,7 @@ class TaskService implements TaskServiceInterface
 		$attributes['order_model'] = $this->getOrderModel($attributes);
 		$attributes['order_name'] = $this->getOrderName($attributes);
 
-		$tasks = Task::select('tasks.*', 'task_statuses.name as status_name')
-			->leftJoin('task_statuses', function ($join) {
-				$join->on('task_statuses.id', '=', 'tasks.task_statuses_id');
-			})
-			->orderByRaw($attributes['order_model'] . "." . $attributes['order_name'] . " " . $attributes['order_direction'] . " NULLS LAST")
-			->paginate(
-				isset($attributes['per_page']) ? $attributes['per_page'] : 10,
-				['*'],
-				'page',
-				isset($attributes['page']) ? $attributes['page'] : 1
-			);
-
-		return $tasks;
+		return $this->task_repository->get_list_paginated($attributes);
 	}
 
 	public function getOrderModel($attributes)
