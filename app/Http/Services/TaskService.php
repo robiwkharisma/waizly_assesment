@@ -62,7 +62,6 @@ class TaskService implements TaskServiceInterface
 		$query = [
 			'id' => $task_id,
 		];
-		dd($query);
 		return $this->task_repository->get_first($query);
 	}
 
