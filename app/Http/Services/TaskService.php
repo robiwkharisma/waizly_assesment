@@ -28,13 +28,13 @@ class TaskService implements TaskServiceInterface
 		$attributes = $params;
 
 		$attributes['order_direction'] = isset($attributes['order_direction']) ? filter_var($attributes['order_direction'], FILTER_VALIDATE_BOOLEAN) ? 'DESC' : 'ASC' : 'ASC';
-		$attributes['order_model'] = $this->getOrderModel($attributes);
-		$attributes['order_name'] = $this->getOrderName($attributes);
+		$attributes['order_model'] = $this->get_order_model($attributes);
+		$attributes['order_name'] = $this->get_order_name($attributes);
 
 		return $this->task_repository->get_list_paginated($attributes);
 	}
 
-	private function getOrderModel($attributes)
+	public function get_order_model($attributes)
 	{
 		if ($attributes['order_column'] == 'status_name' || $attributes['order_column'] == 'status_name') {
 			return 'task_statuses';
@@ -43,7 +43,7 @@ class TaskService implements TaskServiceInterface
 		return 'tasks';
 	}
 
-	private function getOrderName($attributes)
+	public function get_order_name($attributes)
 	{
 		if (isset($attributes['order_column'])) {
 			if ($attributes['order_column'] == 'status_name') {
@@ -62,6 +62,7 @@ class TaskService implements TaskServiceInterface
 		$query = [
 			'id' => $task_id,
 		];
+		dd($query);
 		return $this->task_repository->get_first($query);
 	}
 
